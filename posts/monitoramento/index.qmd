@@ -1,0 +1,64 @@
+---
+title: "Monitoramento de frota de ônibus"
+author: "Samuel Silva"
+date: "2025-11-20"
+categories: [API, code, mapas, monitoramento]
+image: "busao2.png"
+jupyter: python3
+---
+
+
+Este código utiliza a API Olho Vivo da SPTrans para buscar e exibir no mapa, em tempo real, a localização das paradas e dos ônibus de uma linha específica. Primeiro, o script carrega o token de autenticação armazenado no arquivo .env e realiza o login na API. Em seguida, consulta todas as paradas relacionadas ao número da linha informado e utiliza a primeira parada retornada para centralizar o mapa. Com o mapa criado pelo Folium, o código adiciona marcadores azuis representando cada parada, incluindo o nome mostrado ao clicar. Depois faz uma nova requisição para obter a posição atual dos veículos daquela linha e insere marcadores vermelhos para cada ônibus encontrado, exibindo seu prefixo. No final, o objeto m contém o mapa interativo completo, que aparece diretamente no post do Quarto, sem necessidade de salvar imagem ou arquivo externo.
+
+
+
+```{python}
+import os
+import requests
+from dotenv import load_dotenv
+import folium
+
+# Carregar token do .env
+load_dotenv(".env")
+TOKEN = os.getenv("SPTRANS_TOKEN")
+CODIGO_LINHA = 2506
+BASE_URL = "http://api.olhovivo.sptrans.com.br/v2.1"
+
+# AUTENTICAÇÃO
+s = requests.Session()
+s.post(f"{BASE_URL}/Login/Autenticar?token={TOKEN}")
+
+# BUSCAR PARADAS
+res_paradas = s.get(
+    f"{BASE_URL}/Parada/BuscarParadasPorLinha?codigoLinha={CODIGO_LINHA}"
+)
+paradas = res_paradas.json()
+
+# Criar mapa centralizado na primeira parada
+lat = paradas[0]["py"]
+long = paradas[0]["px"]
+
+m = folium.Map(location=[lat, long], zoom_start=14)
+
+# PINS DAS PARADAS (AZUL)
+for p in paradas:
+    folium.Marker(
+        location=[p["py"], p["px"]],
+        popup=p["np"],
+        icon=folium.Icon(color="blue")
+    ).add_to(m)
+
+# POSIÇÃO DOS VEÍCULOS (TEMPO REAL)
+pos = s.get(f"{BASE_URL}/Posicao/Linha?codigoLinha={CODIGO_LINHA}").json()
+veiculos = pos["vs"]
+
+# PINS DOS ÔNIBUS (VERMELHO)
+for v in veiculos:
+    folium.Marker(
+        location=[v["py"], v["px"]],
+        popup=f"Prefixo: {v['p']}",
+        icon=folium.Icon(color="red")
+    ).add_to(m)
+m
+
+```

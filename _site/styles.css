@@ -1,0 +1,149 @@
+/* css styles */
+/* ============================ */
+/*      SCOOBY-DOO THEME        */
+/* ============================ */
+
+:root {
+  --mystery-green: #2b9c8a;
+  --mystery-blue: #3c78b5;
+  --mystery-yellow: #f4d43b;
+  --mystery-orange: #f27f33;
+  --mystery-brown: #7b4a26;
+  --dark-text: #1a1a1a;
+}
+
+/* ---------------------------- */
+/*       BACKGROUND GERAL       */
+/* ---------------------------- */
+
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url("image/movie-scoob-978388.jpeg");
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  opacity: 0.8;
+  z-index: -1;
+}
+
+/* ---------------------------- */
+/*            NAVBAR            */
+/* ---------------------------- */
+
+.navbar {
+  background-color: var(--mystery-blue) !important;
+  border-bottom: 4px solid var(--mystery-orange);
+}
+
+.navbar a,
+.navbar-brand {
+  color: white !important;
+  font-weight: bold;
+  text-shadow: 1px 1px 2px black;
+}
+
+.navbar i {
+  color: white !important;
+}
+
+/* ---------------------------- */
+/*          REMOVER FAIXA BRANCA DO TÍTULO */
+/* ---------------------------- */
+
+header.quarto-title-block,
+header.quarto-title,
+#quarto-header,
+.page-header {
+  background: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+/* Remove fundo padrão do título */
+.quarto-title-block .quarto-title-banner {
+  background: transparent !important;
+}
+
+/* Remove espaços extras */
+.quarto-title-block {
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+/* Se ainda aparecer texto ou box indesejado */
+.quarto-title-block .title {
+  display: none !important;
+}
+
+/* ---------------------------- */
+/*         CONTEÚDO PRINCIPAL   */
+/* ---------------------------- */
+
+main.content {
+  background: transparent !important;
+  padding: 30px;
+  border-radius: 0px;
+  backdrop-filter: none !important;
+  box-shadow: none !important;
+}
+
+h1,
+h2,
+h3 {
+  color: var(--mystery-orange);
+  text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2);
+  font-weight: bold;
+}
+
+/* ---------------------------- */
+/*          POSTS DO BLOG       */
+/* ---------------------------- */
+
+.quarto-post {
+  background: white;
+  border-radius: 18px;
+  border: 2px solid var(--mystery-green);
+  padding: 15px;
+  margin-bottom: 10px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.quarto-post:hover {
+  transform: scale(1.02);
+  transition: 0.2s ease-in-out;
+  border-color: var(--mystery-orange);
+}
+
+/* ---------------------------- */
+/*             FOOTER           */
+/* ---------------------------- */
+
+footer {
+  background: var(--mystery-brown);
+  color: white;
+  padding: 20px;
+  text-align: center;
+  margin-top: 30px;
+  border-top: 4px solid var(--mystery-yellow);
+}
+
+img {
+  border-radius: 12px;
+}
+
+/* ---------------------------- */
+/* AJUSTE DE CONTAINER (MAS CUIDADO!) */
+/* ---------------------------- */
+
+.container,
+.quarto-container,
+#quarto-content {
+  max-width: 10px; /* você colocou isso antes — provavelmente NÃO quer isso */
+  margin-left: 0 !important;
+  margin-right: auto !important;
+}

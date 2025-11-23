@@ -1,0 +1,55 @@
+---
+title: "Regressão linear"
+author: "Samuel Silva"
+date: "2025-11-23"
+categories: [code, regressão linear, gráfico]
+image: "regressao.png"
+jupyter: python3
+---
+
+Este código realiza uma regressão linear simples usando dados armazenados em arquivos externos. Primeiro, ele carrega dois vetores numéricos, X e y, que representam o conjunto de entradas e saídas do modelo. Em seguida, constrói manualmente a matriz da regressão adicionando uma coluna de 1 para o termo constante e aplica a fórmula da solução analítica (método dos mínimos quadrados) para calcular os coeficientes da reta, resultando no intercepto a e na inclinação b. Depois transforma os dados em um DataFrame do pandas para facilitar a visualização e cria um gráfico com o plotnine, exibindo tanto os pontos originais quanto a linha de regressão calculada. O gráfico é então salvo como imagem e posteriormente carregado para ser exibido dentro do post do Quarto, permitindo visualizar o resultado da regressão diretamente dentro do blog.
+
+
+
+```{python}
+
+import numpy as np
+import pandas as pd
+from plotnine import (
+    ggplot, aes, geom_point, geom_abline, theme, element_text
+)
+from IPython.display import Image
+
+# 1. Ler os dados X e y
+X = np.loadtxt("X.txt")
+y = np.loadtxt("y.txt")
+
+# 2. Construir matriz para regressão
+X_matrix = np.column_stack((np.ones(len(X)), X))
+beta = np.linalg.inv(X_matrix.T @ X_matrix) @ (X_matrix.T @ y)
+
+a = beta[0]
+b = beta[1]
+
+print("Coeficientes:")
+print("a (intercepto):", a)
+print("b (inclinação):", b)
+
+# 3. DataFrame
+df = pd.DataFrame({"x": X, "y": y})
+
+# 4. Gráfico
+plot = (
+    ggplot(df, aes("x", "y"))
+    + geom_point()
+    + geom_abline(intercept=a, slope=b)
+    + theme(axis_title=element_text(size=12))
+)
+
+# 5. Salvar corretamente (plotnine)
+plot.save("grafico.png")
+
+# 6. Exibir dentro do post do Quarto
+Image("grafico.png")
+
+```

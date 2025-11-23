@@ -1,0 +1,26 @@
+{
+  "index.qmd": {
+    "index.html": "67d1a566"
+  },
+  "about.qmd": {
+    "about.html": "171c5451"
+  },
+  "posts/post-with-code/index.qmd": {
+    "index.html": "286c3f50"
+  },
+  "posts/welcome/index.qmd": {
+    "index.html": "b1a633c8"
+  },
+  "posts/dolar/index.qmd": {
+    "index.html": "0a6eddad"
+  },
+  "posts/Monitoramento/index.qmd": {
+    "index.html": "e97f780c"
+  },
+  "posts/regressao_linear/index.qmd": {
+    "index.html": "6a5a293e"
+  },
+  "posts/monitoramento/index.qmd": {
+    "index.html": "a836e8f6"
+  }
+}

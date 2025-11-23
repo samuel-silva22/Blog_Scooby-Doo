@@ -1,0 +1,99 @@
+---
+title: "Consultado a cotação do Dólar"
+author: "Samuel Silva"
+date: "2025-11-23"
+categories: [API, code, analysis, dolar]
+image: "moeda.png"
+jupyter: python3
+---
+
+Neste artigo, vou mostrar como desenvolver uma função em Python capaz de se conectar à API do Banco Central do Brasil (Olinda) para obter a cotação do dólar.
+
+Além disso, demonstrarei como preencher automaticamente os dias sem cotação — como feriados e finais de semana — utilizando sempre a última cotação válida disponível. Esse processo garante uma série temporal completa e pronta para análise.
+
+Também apresentarei um exemplo de como gerar um gráfico interativo utilizando Plotly, além de retornar um dicionário com os valores consolidados (opcional, útil para conferência ou processamento adicional).
+
+
+```{python}
+import requests
+import calendar
+from datetime import datetime, timedelta
+import plotly.express as px
+
+
+def get_cotacao_periodo(mmyyyy):
+    """
+    Recebe uma string no formato 'MMYYYY'
+    Exemplo: '062010' → junho de 2010
+    Consulta a API do Banco Central e gera o gráfico da cotação diária.
+    """
+
+    # Converter MMYYYY para um objeto datetime
+    first_date = datetime.strptime(mmyyyy, "%m%Y")
+
+    # Descobrir último dia do mês
+    last_day = calendar.monthrange(first_date.year, first_date.month)[1]
+
+    # Converter para formato MM-DD-YYYY exigido pela API
+    start_date = first_date.strftime("%m-%d-%Y")
+    end_date = first_date.replace(day=last_day).strftime("%m-%d-%Y")
+
+    # Montar URL correta da API
+    url = (
+        "https://olinda.bcb.gov.br/olinda/servico/PTAX/versao/v1/odata/"
+        f"CotacaoDolarPeriodo(dataInicial=@dataInicial,dataFinalCotacao=@dataFinalCotacao)?"
+        f"@dataInicial='{start_date}'&@dataFinalCotacao='{end_date}'&$format=json"
+    )
+
+    # Fazer requisição
+    response = requests.get(url).json()
+    valores_api = response["value"]
+
+    # Guardar valores retornados pela API
+    cotacoes = {}
+    last_valid_value = None
+
+    for entrada in valores_api:
+        data = entrada["dataHoraCotacao"][:10]  # pega YYYY-MM-DD
+        valor = entrada["cotacaoVenda"]
+
+        cotacoes[data] = valor
+        last_valid_value = valor
+
+    # Preencher dias sem cotação (feriados e finais de semana)
+    datas_completas = {}
+    dia_atual = first_date
+    ultimo_dia = first_date.replace(day=last_day)
+
+    while dia_atual <= ultimo_dia:
+        data_str = dia_atual.strftime("%Y-%m-%d")
+
+        if data_str in cotacoes:
+            last_valid_value = cotacoes[data_str]
+
+        # usa última cotação válida (mesmo em dia sem info)
+        datas_completas[data_str] = last_valid_value
+
+        dia_atual += timedelta(days=1)
+
+    # Criar gráfico com Plotly
+    datas = list(datas_completas.keys())
+    valores = list(datas_completas.values())
+
+    fig = px.line(
+        x=datas,
+        y=valores,
+        title=f"Cotação do Dólar — {first_date.strftime('%m/%Y')}",
+        labels={"x": "Data", "y": "Cotação (R$)"}
+    )
+
+    fig.show()
+
+    # Retorna dicionário (opcional, só para checagem)
+    return datas_completas
+
+
+# Executar para junho de 2010 (seu mês)
+get_cotacao_periodo("062010")
+
+```
